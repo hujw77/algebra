@@ -1,4 +1,9 @@
-use crate::{hashing::*, AffineRepr, CurveGroup};
+use std::println;
+
+use crate::{
+    hashing::{HashToCurve, HashToCurveError},
+    AffineRepr, CurveGroup,
+};
 use ark_ff::field_hashers::HashToField;
 use ark_std::marker::PhantomData;
 
@@ -42,10 +47,10 @@ where
         })
     }
 
-    // Produce a hash of the message, using the hash to field and map to curve
-    // traits. This uses the IETF hash to curve's specification for Random
-    // oracle encoding (hash_to_curve) defined by combining these components.
-    // See https://tools.ietf.org/html/draft-irtf-cfrg-hash-to-curve-09#section-3
+    /// Produce a hash of the message, using the hash to field and map to curve
+    /// traits. This uses the IETF hash to curve's specification for Random
+    /// oracle encoding (hash_to_curve) defined by combining these components.
+    /// See <https://tools.ietf.org/html/draft-irtf-cfrg-hash-to-curve-09#section-3>
     fn hash(&self, msg: &[u8]) -> Result<T::Affine, HashToCurveError> {
         // IETF spec of hash_to_curve, from hash_to_field and map_to_curve
         // sub-components
@@ -61,7 +66,13 @@ where
         let rand_curve_elem_0 = self.curve_mapper.map_to_curve(rand_field_elems[0])?;
         let rand_curve_elem_1 = self.curve_mapper.map_to_curve(rand_field_elems[1])?;
 
+        println!("Q0: {:?}", rand_curve_elem_0);
+        println!("Q1: {:?}", rand_curve_elem_1);
+
         let rand_curve_elem = (rand_curve_elem_0 + rand_curve_elem_1).into();
+
+        println!("R: {:?}", rand_curve_elem);
+
         let rand_subgroup_elem = rand_curve_elem.clear_cofactor();
 
         Ok(rand_subgroup_elem)
