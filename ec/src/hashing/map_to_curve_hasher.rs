@@ -1,3 +1,5 @@
+use std::println;
+
 use crate::{
     hashing::{HashToCurve, HashToCurveError},
     AffineRepr, CurveGroup,
@@ -64,7 +66,12 @@ where
         let rand_curve_elem_0 = self.curve_mapper.map_to_curve(rand_field_elems[0])?;
         let rand_curve_elem_1 = self.curve_mapper.map_to_curve(rand_field_elems[1])?;
 
+        println!("Q0: {:?}", &rand_curve_elem_0);
+        println!("Q1: {:?}", &rand_curve_elem_1);
+
         let rand_curve_elem = (rand_curve_elem_0 + rand_curve_elem_1).into();
+
+        println!("R: {:?}", &rand_curve_elem);
         let rand_subgroup_elem = rand_curve_elem.clear_cofactor();
 
         Ok(rand_subgroup_elem)
